@@ -11,35 +11,38 @@ import std.socketstream;
 int main(string[] args) {
    printHelp();
 
+   bool help = false;
    string domain = "192.168.223.11";
    ushort port = 30000;
    getopt(args
+         , "h", &help
          , "i", &domain
          , "p", &port);
+   if (!help) {
+      writefln("Connecting to %s on port %d...", domain, port);
 
-   writefln("Connecting to %s on port %d...", domain, port);
+      Socket sock = new TcpSocket(new InternetAddress(domain, port));
+      scope(exit) sock.close();
 
-   Socket sock = new TcpSocket(new InternetAddress(domain, port));
-   scope(exit) sock.close();
+      Stream ss = new SocketStream(sock);
 
-   Stream ss = new SocketStream(sock);
-
-   string cmd;
-   while (cmd != "q") {
-      write(">");
-      readf(" %s\n", &cmd);
-      if (cmd == "q") {
-         break;
-      } else if (cmd == "h") {
-         printHelp();
-      } else if (cmd == "s") {
-         queryStatus(ss);
-      } else if (cmd == "p") {
-         send(ss);
-      } else {
-         ss.writeString(cmd ~ "\r\n");
-         auto line = ss.readLine();
-         writeln(line);
+      string cmd;
+      while (cmd != "q") {
+         write(">");
+         readf(" %s\n", &cmd);
+         if (cmd == "q") {
+            break;
+         } else if (cmd == "h") {
+            printHelp();
+         } else if (cmd == "s") {
+            queryStatus(ss);
+         } else if (cmd == "p") {
+            send(ss);
+         } else {
+            ss.writeString(cmd ~ "\r\n");
+            auto line = ss.readLine();
+            writeln(line);
+         }
       }
    }
    return 0;
