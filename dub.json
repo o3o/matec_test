@@ -1,0 +1,8 @@
+{
+	"name": "matec_test",
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2015, Orfeo Da Viá",
+	"authors": ["dao"],
+	"dependencies": {
+	}
+}
